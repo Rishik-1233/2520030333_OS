@@ -3,43 +3,39 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
-
 int main()
 {
+    pid_t pid;
 
-char command[100];
+    printf("OSSP Program 01\n");
 
+    pid = fork();
 
-printf("OSSP-Shell> ");
+    if(pid < 0)
+    {
+        printf("Fork failed\n");
+        return 1;
+    }
 
-scanf("%s",command);
+    else if(pid == 0)
+    {
+        printf("Child Process\n");
+        printf("Child PID: %d\n", getpid());
 
+        execl("/bin/ls","ls",NULL);
 
-pid_t pid=fork();
+        printf("Exec failed\n");
+    }
 
+    else
+    {
+        printf("Parent Process\n");
+        printf("Parent PID: %d\n", getpid());
 
-if(pid==0)
-{
+        waitpid(pid,NULL,0);
 
-execlp(command,command,NULL);
+        printf("Child completed\n");
+    }
 
-
-printf("Command not found\n");
-
-exit(1);
-
-}
-
-else
-{
-
-wait(NULL);
-
-printf("Command completed\n");
-
-}
-
-
-return 0;
-
+    return 0;
 }
